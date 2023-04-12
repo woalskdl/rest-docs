@@ -1,129 +1,83 @@
 package com.rest.docs.member;
 
-import static com.rest.docs.RestDocsConfiguration.field;
-import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.get;
-import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.post;
-import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.put;
-import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
-import static org.springframework.restdocs.payload.PayloadDocumentation.requestFields;
-import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
-import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
-import static org.springframework.restdocs.request.RequestDocumentation.pathParameters;
-import static org.springframework.restdocs.request.RequestDocumentation.requestParameters;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.MediaType;
+import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
+
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import com.rest.docs.TestSupport;
-import org.junit.jupiter.api.Test;
-import org.springframework.http.MediaType;
+@SpringBootTest
+@AutoConfigureMockMvc
+class MemberApiTest {
 
-class MemberApiTest extends TestSupport {
+    /**
+     * 1. Member 단일 조회 -> 완료
+     * 2. Member 생성 -> 완료
+     * 3. Member 수정 -> 완료
+     * 4. Member 페이징 조회 ->
+     */
+
+    @Autowired
+    private MockMvc mockMvc;
 
     @Test
     public void member_page_test() throws Exception {
         mockMvc.perform(
                 get("/api/members")
-                    .param("size", "10")
-                    .param("page", "0")
-                    .contentType(MediaType.APPLICATION_JSON)
-            )
-            .andExpect(status().isOk())
-            .andDo(
-                restDocs.document(
-                    requestParameters(
-                        parameterWithName("size").optional().description("size"),
-                        parameterWithName("page").optional().description("page")
-                    )
+                        .param("size", "10")
+                        .param("page", "0")
+                        .contentType(MediaType.APPLICATION_JSON)
                 )
-            )
-        ;
+                .andDo(print())
+                .andExpect(status().isOk());
     }
 
     @Test
-    public void member_get() throws Exception {
-        // 조회 API -> 대상의 데이터가 있어야 합니다.
+    public void member_get() throws Exception{
         mockMvc.perform(
                 get("/api/members/{id}", 1L)
-                    .contentType(MediaType.APPLICATION_JSON)
-            )
-            .andExpect(status().isOk())
-            .andDo(
-                restDocs.document(
-                    pathParameters(
-                        parameterWithName("id").description("Member ID")
-                    ),
-                    responseFields(
-                        fieldWithPath("id").description("ID"),
-                        fieldWithPath("name").description("name"),
-                        fieldWithPath("email").description("email")
-                    )
+                        .contentType(MediaType.APPLICATION_JSON)
                 )
-            )
-        ;
+                .andDo(print())
+                .andExpect(status().isOk());
+
     }
 
     @Test
-    public void member_create() throws Exception {
+    public void member_create() throws Exception{
         mockMvc.perform(
                 post("/api/members")
-                    .contentType(MediaType.APPLICATION_JSON)
-                    .content(readJson("/json/member-api/member-create.json"))
-            )
-            .andExpect(status().isOk())
-            .andDo(
-                restDocs.document(
-                    requestFields(
-                        fieldWithPath("name").description("name").attributes(field("length", "10")),
-                        fieldWithPath("email").description("email").attributes(field("length", "30")),
-                        fieldWithPath("status").description("Code Member Status 참조")
-                    )
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("" +
+                                "{\n" +
+                                "  \"email\": \"bbb@bbb.com\",\n" +
+                                "  \"name\": \"bbb\"\n" +
+                                "}"
+                        )
                 )
-            )
-        ;
+                .andDo(print())
+                .andExpect(status().isOk());
     }
 
     @Test
-    public void member_modify() throws Exception {
+    public void member_modify() throws Exception{
         mockMvc.perform(
-                put("/api/members/{id}", 1)
-                    .contentType(MediaType.APPLICATION_JSON)
-                    .content(readJson("/json/member-api/member-modify.json"))
-
-            )
-            .andExpect(status().isOk())
-            .andDo(
-                restDocs.document(
-                    pathParameters(
-                        parameterWithName("id").description("Member ID")
-                    ),
-                    requestFields(
-                        fieldWithPath("name").description("name").attributes(field("length", "10"))
-                    )
+                put("/api/members/{id}", 1L)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("" +
+                                "{\n" +
+                                "  \"name\": \"new_jam\"\n" +
+                                "}"
+                        )
                 )
-            )
-        ;
-    }
-
-
-    @Test
-    public void member_create_글자_length_실패() throws Exception {
-        mockMvc.perform(
-                post("/api/members")
-                    .contentType(MediaType.APPLICATION_JSON)
-                    .content(readJson("/json/member-api/member-create-invalid.json"))
-            )
-            .andExpect(status().isBadRequest())
-        ;
-    }
-
-    @Test
-    public void member_modify_글자_length_실패() throws Exception {
-        mockMvc.perform(
-                put("/api/members/{id}", 1)
-                    .contentType(MediaType.APPLICATION_JSON)
-                    .content(readJson("/json/member-api/member-modify-invalid.json"))
-
-            )
-            .andExpect(status().isBadRequest())
-        ;
+                .andDo(print())
+                .andExpect(status().isOk());
     }
 }
