@@ -10,6 +10,7 @@ import org.springframework.restdocs.snippet.Attributes.Attribute;
 @TestConfiguration
 public class RestDocsConfiguration {
 
+    // JSON 형태 beautify 및 document identifier 공통 지
     @Bean
     public RestDocumentationResultHandler write() {
         return MockMvcRestDocumentation.document(
