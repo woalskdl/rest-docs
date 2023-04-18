@@ -5,7 +5,8 @@ Andy Wilkinson;
 :source-highlighter: highlightjs
 :toc: left
 :toclevels: 2
-:sectlinks
+:sectlinks:
+
+include::overview.adoc[]
 
 include::Member-API.adoc[]
-
