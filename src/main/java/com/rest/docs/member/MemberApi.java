@@ -42,7 +42,7 @@ public class MemberApi {
     }
 
     @GetMapping
-    public Page<MemberResponse> getMemebers (
+    public Page<MemberResponse> getMembers(
             @PageableDefault(sort = "id", direction = Sort.Direction.DESC) Pageable pageable
     ) {
         return memberRepository.findAll(pageable).map(MemberResponse::new);
