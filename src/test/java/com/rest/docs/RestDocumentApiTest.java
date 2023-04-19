@@ -4,6 +4,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.get;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.post;
 import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
 import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
@@ -38,6 +39,17 @@ class RestDocumentApiTest extends TestSupport {
                         )
                 )
         ;
+    }
+
+    @Test
+    public void memberStatus() throws Exception {
+
+        mockMvc.perform(get("/test/memberStatus")
+                        .contentType(MediaType.APPLICATION_JSON)
+                )
+                .andExpect(status(). isOk()
+                );
+
     }
 
 }

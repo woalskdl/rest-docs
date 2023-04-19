@@ -19,14 +19,24 @@ public class Member {
     private String email;
     @Column(name = "name", nullable = false)
     private String name;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "status", nullable = false)
+    private MemberStatus status;
+
     @Column(name = "created_at", nullable = false)
     private LocalDateTime createdAt;
     @Column(name = "updated_at", nullable = false)
     private LocalDateTime updatedAt;
 
-    public Member(String email, String name) {
+    public Member(
+            final String email,
+            final String name,
+            final MemberStatus status
+    ) {
         this.email = email;
         this.name = name;
+        this.status = status;
         this.createdAt = LocalDateTime.now();
         this.updatedAt = LocalDateTime.now();
     }
